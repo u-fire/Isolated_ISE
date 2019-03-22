@@ -1,0 +1,20 @@
+[package]
+name = "ufire_ise"
+version = "0.9.3"
+authors = ["Justin Decker <justin@ufire.co>"]
+readme = "README.md"
+description = "Use any Ion Specific Electrode to measure pH with automatic temperature compensation, ORP, raw mV and temperature in Celsius"
+license = "MIT"
+keywords = ["ph", "orp", "sensor", "hydroponics", "aquarium"]
+
+[lib]
+name = "ufire_ise"
+path = "src/lib.rs"
+
+[[bin]]
+name = "ufire_ise_bin"
+path = "src/main.rs"
+
+[dependencies]
+i2cdev = "0.3.2"
+byteorder = "1"

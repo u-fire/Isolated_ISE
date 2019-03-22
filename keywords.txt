@@ -1,0 +1,43 @@
+#######################################
+# Syntax Coloring Map For EC-Salinity
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+measuremV	KEYWORD2
+measureTemp	KEYWORD2
+calibrateSingle	KEYWORD2
+calibrateProbeLow	KEYWORD2
+calibrateProbeHigh	KEYWORD2
+setDualPointCalibration	KEYWORD2
+getCalibrateOffset	KEYWORD2
+useTemperatureCompensation	KEYWORD2
+usingTemperatureCompensation	KEYWORD2
+setTemp	KEYWORD2
+useDualPoint	KEYWORD2
+usingDualPoint	KEYWORD2
+getCalibrateHighReading	KEYWORD2
+getCalibrateHighReference	KEYWORD2
+getCalibrateLowReading	KEYWORD2
+getCalibrateLowReference	KEYWORD2
+getVersion	KEYWORD2
+setI2CAddress	KEYWORD2
+reset	KEYWORD2
+measurepH	KEYWORD2
+measureORP	KEYWORD2
+setProbePotential	KEYWORD2
+getProbePotential	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+#######################################
+# Constants (LITERAL1)
+#######################################

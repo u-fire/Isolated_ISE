@@ -1,0 +1,20 @@
+{
+  "name": "Isolated ISE Probe Interface",
+  "keywords": "pH, hydroponics, ORP, ISE, ion, specific, electrode, aquarium, pool, chlorine",
+  "description": "An Ion Specific Electrode Probe Interface. Use it to measure pH, ORP, or any other voltage based probe.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/u-fire/Isolated_ISE.git"
+  },
+  "authors": [
+    {
+      "name": "uFire",
+      "email": "justin@ufire.co",
+      "url": "http://ufire.co",
+      "maintainer": true
+    }
+  ],
+  "version": "1.0.0",
+  "frameworks": "arduino",
+  "platforms": "*"
+}
