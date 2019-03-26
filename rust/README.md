@@ -1,11 +1,11 @@
-### ISE Probe Interface
+### Isolated ISE Probe Interface
 
 > Use any Ion Specific Electrode
 * measure pH with automatic temperature compensation
 * measure ORP and Eh
 * raw mV
 * temperature in Celsius
-* library can be easily extended for any probe
+* electrically isolated
 
 #### What it is
 An I2C slave device that can interface with any voltage based sensor such as a pH or ORP probe. There are pin headers available to connect a DS18B20 temperature sensor for automatic temperature compensation. The firmware on the device provides two calibration options, single or dual point.

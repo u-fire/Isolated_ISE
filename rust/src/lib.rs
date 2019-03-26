@@ -38,11 +38,8 @@ const ISE_CALIBRATE_READHIGH_REGISTER: u8 = 21;
 const ISE_CALIBRATE_READLOW_REGISTER: u8 = 25;
 const ISE_SOLUTION_REGISTER: u8 = 29;
 const ISE_BUFFER_REGISTER: u8 = 33;
-const ISE_CONFIG_REGISTER: u8 = 37;
-const ISE_TASK_REGISTER: u8 = 38;
-
-const ISE_DUALPOINT_CONFIG_BIT: u8 = 0;
-const ISE_TEMP_COMPENSATION_CONFIG_BIT: u8 = 1;
+const ISE_FW_VERSION_REGISTER: u8 = 37;
+const ISE_TASK_REGISTER: u8 = 39;
 
 const ISE_TEMP_MEASURE_TIME: u64 = 750;
 const ISE_MV_MEASURE_TIME: u64 = 1750;
@@ -78,8 +75,7 @@ impl IseProbe {
     pub fn measure_mv(&mut self) -> Result<(f32), Box<LinuxI2CError>> {
         let mut mv: f32;
 
-        self.dev
-            .smbus_write_byte_data(ISE_TASK_REGISTER, ISE_MEASURE_MV)?;
+        self.dev.smbus_write_byte_data(ISE_TASK_REGISTER, ISE_MEASURE_MV)?;
         thread::sleep(Duration::from_millis(ISE_MV_MEASURE_TIME));
         mv = self._read_register(ISE_MV_REGISTER)?;
 
@@ -101,28 +97,26 @@ impl IseProbe {
     /// let mut mv = ufire_ise::IseProbe::new("/dev/i2c-3", 0x3f).unwrap();
     /// mv.measure_ph();
     /// ```
-    pub fn measure_ph(&mut self) -> Result<(f32), Box<LinuxI2CError>> {
+    pub fn measure_ph(&mut self, temp_c:f32) -> Result<(f32), Box<LinuxI2CError>> {
         let mut ph: f32;
-
-        self.dev
-            .smbus_write_byte_data(ISE_TASK_REGISTER, ISE_MEASURE_MV)?;
+        self._write_register(ISE_TEMP_REGISTER, temp_c)?;
+        self.dev.smbus_write_byte_data(ISE_TASK_REGISTER, ISE_MEASURE_MV)?;
         thread::sleep(Duration::from_millis(ISE_MV_MEASURE_TIME));
         ph = self._read_register(ISE_MV_REGISTER)?;
 
         ph = f32::abs(7.0 - (ph / PROBE_MV_TO_PH));
 
-        if self.using_temperature_compensation()? == 1 {
-            let temp = self.measure_temp()?;
+        if temp_c != -127.0 {
             let distance_from_7 = f32::abs(7.0 - f32::round(ph));
-            let distance_from_25 = f32::floor(f32::abs(25.0 - f32::round(temp)) / 10.0);
+            let distance_from_25 = f32::floor(f32::abs(25.0 - f32::round(temp_c)) / 10.0);
             let mut temp_multiplier = (distance_from_25 * distance_from_7) * TEMP_CORRECTION_FACTOR;
 
-            if ph >= 8.0 && temp >= 35.0 {
+            if ph >= 8.0 && temp_c >= 35.0 {
                 // negative
                 temp_multiplier *= -1.0;
             }
 
-            if ph <= 6.0 && temp <= 15.0 {
+            if ph <= 6.0 && temp_c <= 15.0 {
                 // negative
                 temp_multiplier *= -1.0;
             }
@@ -164,8 +158,7 @@ impl IseProbe {
     /// mv.measure_temp();
     /// ```
     pub fn measure_temp(&mut self) -> Result<(f32), Box<LinuxI2CError>> {
-        self.dev
-            .smbus_write_byte_data(ISE_TASK_REGISTER, ISE_MEASURE_TEMP)?;
+        self.dev.smbus_write_byte_data(ISE_TASK_REGISTER, ISE_MEASURE_TEMP)?;
         thread::sleep(Duration::from_millis(ISE_TEMP_MEASURE_TIME));
 
         Ok(self._read_register(ISE_TEMP_REGISTER)?)
@@ -193,8 +186,7 @@ impl IseProbe {
     /// ```
     pub fn calibrate_single(&mut self, solution_mv: f32) -> Result<(), Box<LinuxI2CError>> {
         self._write_register(ISE_SOLUTION_REGISTER, solution_mv)?;
-        self.dev
-            .smbus_write_byte_data(ISE_TASK_REGISTER, ISE_CALIBRATE_SINGLE)?;
+        self.dev.smbus_write_byte_data(ISE_TASK_REGISTER, ISE_CALIBRATE_SINGLE)?;
         thread::sleep(Duration::from_millis(ISE_MV_MEASURE_TIME));
         Ok(())
     }
@@ -209,8 +201,7 @@ impl IseProbe {
     /// ```
     pub fn calibrate_probe_low(&mut self, solution_mv: f32) -> Result<(), Box<LinuxI2CError>> {
         self._write_register(ISE_SOLUTION_REGISTER, solution_mv)?;
-        self.dev
-            .smbus_write_byte_data(ISE_TASK_REGISTER, ISE_CALIBRATE_LOW)?;
+        self.dev.smbus_write_byte_data(ISE_TASK_REGISTER, ISE_CALIBRATE_LOW)?;
         thread::sleep(Duration::from_millis(ISE_MV_MEASURE_TIME));
         Ok(())
     }
@@ -225,8 +216,7 @@ impl IseProbe {
     /// ```
     pub fn calibrate_probe_high(&mut self, solution_mv: f32) -> Result<(), Box<LinuxI2CError>> {
         self._write_register(ISE_SOLUTION_REGISTER, solution_mv)?;
-        self.dev
-            .smbus_write_byte_data(ISE_TASK_REGISTER, ISE_CALIBRATE_HIGH)?;
+        self.dev.smbus_write_byte_data(ISE_TASK_REGISTER, ISE_CALIBRATE_HIGH)?;
         thread::sleep(Duration::from_millis(ISE_MV_MEASURE_TIME));
         Ok(())
     }
@@ -312,60 +302,28 @@ impl IseProbe {
         Ok(self._read_register(ISE_CALIBRATE_READLOW_REGISTER)?)
     }
 
-    /// Configures the device to use temperature compensation or not.
+    /// Returns the firmware version of the device.
     ///
     /// # Example
     /// ```
     /// let mut mv = ufire_ise::IseProbe::new("/dev/i2c-3", 0x3f).unwrap();
-    /// mv.use_temperature_compensation(true);
-    /// assert_eq!(1, mv.using_temperature_compensation().unwrap());
+    /// assert_eq!(0x1, mv.get_version().unwrap());
     /// ```
-    pub fn use_temperature_compensation(&mut self, b: bool) -> Result<(), Box<LinuxI2CError>> {
-        self._change_register(ISE_CONFIG_REGISTER)?;
-        let mut config: u8 = self.dev.smbus_read_byte()?;
-        thread::sleep(Duration::from_millis(10));
-        if b {
-            config |= 1 << ISE_TEMP_COMPENSATION_CONFIG_BIT;
-        } else {
-            config &= !(1 << ISE_TEMP_COMPENSATION_CONFIG_BIT);
-        }
-        self.dev.smbus_write_byte_data(ISE_CONFIG_REGISTER, config)?;
-        thread::sleep(Duration::from_millis(10));
-        Ok(())
-    }
-
-    /// Configures device to use dual-point calibration.
-    ///
-    /// # Example
-    /// ```
-    /// let mut mv = ufire_ise::IseProbe::new("/dev/i2c-3", 0x3f).unwrap();
-    /// mv.use_dual_point(true);
-    /// assert_eq!(1, mv.using_dual_point().unwrap());
-    /// ```
-    pub fn use_dual_point(&mut self, b: bool) -> Result<(), Box<LinuxI2CError>> {
-        self._change_register(ISE_CONFIG_REGISTER)?;
-        let mut config: u8 = self.dev.smbus_read_byte()?;
-        thread::sleep(Duration::from_millis(10));
-        if b {
-            config |= 1 << ISE_DUALPOINT_CONFIG_BIT;
-        } else {
-            config &= !(1 << ISE_DUALPOINT_CONFIG_BIT);
-        }
-        self.dev.smbus_write_byte_data(ISE_CONFIG_REGISTER, config)?;
-        thread::sleep(Duration::from_millis(10));
-        Ok(())
+    pub fn get_version(&mut self) -> Result<(u8), Box<LinuxI2CError>> {
+        self._change_register(ISE_VERSION_REGISTER)?;
+        //thread::sleep(Duration::from_millis(25));
+        Ok(self.dev.smbus_read_byte()?)
     }
 
     /// Returns the firmware version of the device.
     ///
     /// # Example
     /// ```
-    /// let mut mv = ufire_ise::IseProbe::new("/dev/i2c-3", 0x3f).unwrap();
-    /// assert_eq!(0x1a, mv.get_version().unwrap());
+    /// let mut mv = ufire_ise::IseProbe::new("/dev/i2c-3", 0x3c).unwrap();
+    /// assert_eq!(0x1, mv.get_version().unwrap());
     /// ```
-    pub fn get_version(&mut self) -> Result<(u8), Box<LinuxI2CError>> {
-        self._change_register(ISE_VERSION_REGISTER)?;
-        //thread::sleep(Duration::from_millis(25));
+    pub fn get_firmware(&mut self) -> Result<(u8), Box<LinuxI2CError>> {
+        self._change_register(ISE_FW_VERSION_REGISTER)?;
         Ok(self.dev.smbus_read_byte()?)
     }
 
@@ -390,34 +348,6 @@ impl IseProbe {
         Ok(())
     }
 
-    /// Configures the device to use temperature compensation.
-    ///
-    /// # Example
-    /// ```
-    /// let mut mv = ufire_ise::IseProbe::new("/dev/i2c-3", 0x3f).unwrap();
-    /// mv.use_temperature_compensation(true);
-    /// assert_eq!(1, mv.using_temperature_compensation().unwrap());
-    /// ```
-    pub fn using_temperature_compensation(&mut self) -> Result<(u8), Box<LinuxI2CError>> {
-        self._change_register(ISE_CONFIG_REGISTER)?;
-        let config: u8 = self.dev.smbus_read_byte()?;
-        Ok((config >> ISE_TEMP_COMPENSATION_CONFIG_BIT) & 1)
-    }
-
-    /// Configures device to use dual-point calibration.
-    ///
-    /// # Example
-    /// ```
-    /// let mut mv = ufire_ise::IseProbe::new("/dev/i2c-3", 0x3f).unwrap();
-    /// mv.use_dual_point(true);
-    /// assert_eq!(1, mv.using_dual_point().unwrap());
-    /// ```
-    pub fn using_dual_point(&mut self) -> Result<(u8), Box<LinuxI2CError>> {
-        self._change_register(ISE_CONFIG_REGISTER)?;
-        let config: u8 = self.dev.smbus_read_byte()?;
-        Ok((config >> ISE_DUALPOINT_CONFIG_BIT) & 1)
-    }
-
     /// Sets the I2C address of the device.
     ///
     /// # Example
@@ -425,7 +355,7 @@ impl IseProbe {
     /// let mut mv = ufire_ise::IseProbe::new("/dev/i2c-3", 0x3f).unwrap();
     /// // mv.set_i2c_address(0x4f);
     /// ```
-    pub fn set_i2c_address(&mut self, i2c_address: u8) -> Result<(), Box<LinuxI2CError>> {
+    pub fn set_i2c_address(&mut self, i2c_address: u16) -> Result<(), Box<LinuxI2CError>> {
         self._write_register(ISE_SOLUTION_REGISTER, i2c_address as f32)?;
         self.dev.smbus_write_byte_data(ISE_TASK_REGISTER, ISE_I2C)?;
 
