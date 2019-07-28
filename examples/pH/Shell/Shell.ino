@@ -16,7 +16,7 @@
    Single Point Calibration
     cal 4.0
 
-   Dual Point Calibration (in mV)
+   Dual Point Calibration
     low 4.0
     high 7.0
 

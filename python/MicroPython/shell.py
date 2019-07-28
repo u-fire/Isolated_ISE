@@ -15,7 +15,6 @@ class iseshell(cmd.Cmd):
         print("\tdual point: ")
         print("\t\tlow reference | read: " + str(ise.getCalibrateLowReference()) + " | " + str(ise.getCalibrateLowReading()))
         print("\t\thigh reference | reading: " + str(ise.getCalibrateHighReference()) + " | " + str(ise.getCalibrateHighReading()))
-        print("\ttemp. compensation: ")
         print("\tversion: " + str(ise.getVersion()) + "." + str(ise.getFirmware()))
 
     def do_reset(self, a):

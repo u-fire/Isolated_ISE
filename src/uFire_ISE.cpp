@@ -41,17 +41,17 @@
 ISE_Probe::ISE_Probe(uint8_t i2c_address)
 {
   _address = i2c_address;
-  #ifndef ARDUINO_SAMD_ZERO
+  #ifndef ARDUINO_SAMD_VARIANT_COMPLIANCE
   Wire.begin();
-  #endif // ifndef ARDUINO_SAMD_ZERO
+  #endif // ifndef ARDUINO_SAMD_VARIANT_COMPLIANCE
 }
 
 ISE_Probe::ISE_Probe()
 {
   _address = ISE_PROBE_I2C;
-  #ifndef ARDUINO_SAMD_ZERO
+  #ifndef ARDUINO_SAMD_VARIANT_COMPLIANCE
   Wire.begin();
-  #endif // ifndef ARDUINO_SAMD_ZERO
+  #endif // ifndef ARDUINO_SAMD_VARIANT_COMPLIANCE
 }
 
 #ifdef ESP32
