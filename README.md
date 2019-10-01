@@ -15,17 +15,17 @@ There is extensive [documentation](http://ufire.co/docs/uFire_ISE/) on the use a
 
 ~~~
 #include "uFire_ISE.h"
-ISE_Probe mv;
+uFire_ISE mv;
 mv.measuremV();
 ~~~
 ~~~
-#include "ISE_pH.h"
-ISE_pH ph;
+#include "uFire_pH.h"
+uFire_pH ph;
 ph.measurepH();
 ~~~
 ~~~
-#include "ISE_ORP.h"
-ISE_ORP orp;
+#include "uFire_ORP.h"
+uFire_ORP orp;
 orp.measureORP();
 ~~~
 
