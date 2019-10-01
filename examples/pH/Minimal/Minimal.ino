@@ -4,9 +4,9 @@
    questions@ufire.co to get in touch with someone
  */
 
- #include <ISE_pH.h>
+ #include <uFire_pH.h>
 
-ISE_pH ph;
+uFire_pH ph;
 
 void setup() {
   Serial.begin(9600);

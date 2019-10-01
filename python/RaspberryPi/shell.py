@@ -1,8 +1,8 @@
 import cmd
 
-from ise_ph import ise_ph
+from uFire_pH import uFire_pH
 
-ise = ise_ph()
+ise = uFire_pH()
 
 
 class iseshell(cmd.Cmd):

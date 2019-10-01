@@ -22,57 +22,50 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-/*!
-   \file ISE_Probe.cpp
-   \brief ISE Probe Class Implementation
-
-   ufire.co for links to documentation, examples, and libraries
-   github.com/u-fire/ISE_Probe for feature requests, bug reports, and  questions
-   questions@ufire.co to get in touch with someone
- */
-
-#ifndef ISE_PH_H
-#define ISE_PH_H
+#ifndef ISE_ORP_H
+#define ISE_ORP_H
 
 #include <math.h>
 #include "uFire_ISE.h"
 
-#define PROBE_MV_TO_PH 59.2
-#define TEMP_CORRECTION_FACTOR 0.03
+#define POTENTIAL_REGISTER_ADDRESS 100
 
-class ISE_pH : public ISE_Probe {
+class uFire_ORP : public uFire_ISE {
 public:
 
-  float pH;
-  float pOH;
-  ISE_pH() {}
+  float ORP;
+  float Eh;
+  uFire_ORP() {}
 
-  ISE_pH(uint8_t i2c_address) : ISE_Probe(i2c_address) {}
+  uFire_ORP(uint8_t i2c_address) : uFire_ISE(i2c_address) {}
 
   #ifdef ESP32
-  ISE_pH(uint8_t sda,
-         uint8_t scl,
-         uint8_t i2c_address) : ISE_Probe(sda, scl, i2c_address) {}
+  uFire_ORP(uint8_t sda,
+          uint8_t scl,
+          uint8_t i2c_address) : ISE_Probe(sda, scl, i2c_address) {}
 
-  ISE_pH(uint8_t sda,
-         uint8_t scl) : ISE_Probe(sda, scl) {}
+  uFire_ORP(uint8_t sda,
+          uint8_t scl) : ISE_Probe(sda, scl) {}
 
   #endif // ifndef ESP32
-  float measurepH();
-  float measurepH(float temp);
-  float pHtomV(float pH);
-  float mVtopH(float mV);
-  void  calibrateSingle(float solutionpH);
-  void  calibrateProbeLow(float solutionpH);
-  float getCalibrateLowReference();
-  float getCalibrateLowReading();
-  void  calibrateProbeHigh(float solutionpH);
-  float getCalibrateHighReference();
-  float getCalibrateHighReading();
-
-private:
-
-  float _measure(float temp);
+  ~uFire_ORP();
+  float    measureORP();
+  void     setProbePotential(uint32_t potential);
+  uint32_t getProbePotential();
 };
 
-  #endif // ifndef ISEPROBE_H
+class ISE_ORP : public uFire_ORP{
+public:
+        ISE_ORP() {}
+        ISE_ORP(uint8_t i2c_address) : uFire_ORP(i2c_address) {}
+        #ifdef ESP32
+        ISE_ORP(uint8_t sda,
+                uint8_t scl,
+                uint8_t i2c_address) : uFire_ORP(sda, scl, i2c_address) {}
+
+        ISE_ORP(uint8_t sda,
+                uint8_t scl) : uFire_ORP(sda, scl) {}
+
+        #endif // ifndef ESP32
+};
+#endif // ifndef ISE_ORP_H

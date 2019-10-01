@@ -6,9 +6,9 @@
    It shows how to interactively calibrate a probe using dual-points.
  */
 
-#include <ISE_pH.h>
+#include <uFire_pH.h>
 
-ISE_pH pH;
+uFire_pH pH;
 
 void calibrateLow() {
   Serial.println("Put the probe in the reference low solution and wait for the readings to stabilize.");

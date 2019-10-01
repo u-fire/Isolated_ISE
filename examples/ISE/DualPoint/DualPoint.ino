@@ -8,7 +8,7 @@
 
 #include <uFire_ISE.h>
 
-ISE_Probe mv;
+uFire_ISE mv;
 
 void calibrateLow() {
   Serial.println("Put the probe in the reference low solution and wait for the readings to stabilize.");

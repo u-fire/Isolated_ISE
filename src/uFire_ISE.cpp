@@ -22,15 +22,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-/*!
-   \file ISE_Probe.cpp
-   \brief ISE Probe Class Implementation
-
-   ufire.co for links to documentation, examples, and libraries
-   github.com/u-fire/ISE_Probe for feature requests, bug reports, and  questions
-   questions@ufire.co to get in touch with someone
- */
-
 #include <math.h>
 #include "uFire_ISE.h"
 
@@ -38,7 +29,7 @@
    \brief Class constructor
  */
 
-ISE_Probe::ISE_Probe(uint8_t i2c_address)
+uFire_ISE::uFire_ISE(uint8_t i2c_address)
 {
   _address = i2c_address;
   #ifndef ARDUINO_SAMD_VARIANT_COMPLIANCE
@@ -46,7 +37,7 @@ ISE_Probe::ISE_Probe(uint8_t i2c_address)
   #endif // ifndef ARDUINO_SAMD_VARIANT_COMPLIANCE
 }
 
-ISE_Probe::ISE_Probe()
+uFire_ISE::uFire_ISE()
 {
   _address = ISE_PROBE_I2C;
   #ifndef ARDUINO_SAMD_VARIANT_COMPLIANCE
@@ -55,13 +46,13 @@ ISE_Probe::ISE_Probe()
 }
 
 #ifdef ESP32
-ISE_Probe::ISE_Probe(uint8_t sda, uint8_t scl, uint8_t i2c_address)
+uFire_ISE::uFire_ISE(uint8_t sda, uint8_t scl, uint8_t i2c_address)
 {
   _address = i2c_address;
   Wire.begin(sda, scl, 100000);
 }
 
-ISE_Probe::ISE_Probe(uint8_t sda, uint8_t scl)
+uFire_ISE::uFire_ISE(uint8_t sda, uint8_t scl)
 {
   _address = ISE_PROBE_I2C;
   Wire.begin(sda, scl, 100000);
@@ -72,17 +63,17 @@ ISE_Probe::ISE_Probe(uint8_t sda, uint8_t scl)
 /*!
    \brief Class destructor
  */
-ISE_Probe::~ISE_Probe()
+uFire_ISE::~uFire_ISE()
 {}
 
 /*!
    \code
-    ISE_Probe::measuremV();
+    uFire_ISE::measuremV();
    \endcode
    \brief Starts a measurement.
    \return mV
  */
-float ISE_Probe::measuremV()
+float uFire_ISE::measuremV()
 {
   _send_command(ISE_MEASURE_MV);
   delay(ISE_MV_MEASURE_TIME);
@@ -100,14 +91,14 @@ float ISE_Probe::measuremV()
 
 /*!
    \code
-    ISE_Probe::measureTemp();
+    uFire_ISE::measureTemp();
    \endcode
    \brief Starts a temperature measurement
    \post #tempC and #tempF are updated
    \note A value of -127 means the device is not connected.
    \return temperature in C
  */
-float ISE_Probe::measureTemp()
+float uFire_ISE::measureTemp()
 {
   _send_command(ISE_MEASURE_TEMP);
   delay(ISE_TEMP_MEASURE_TIME);
@@ -125,13 +116,13 @@ float ISE_Probe::measureTemp()
 
 /*!
     \code
-        ISE_Probe::setTemp(20.2);
+        uFire_ISE::setTemp(20.2);
     \endcode
 
    \brief Sets the temperature used by the device.
    \post #tempC and #tempF are updated
  */
-void ISE_Probe::setTemp(float temp_C)
+void uFire_ISE::setTemp(float temp_C)
 {
   _write_register(ISE_TEMP_REGISTER, temp_C);
   tempC = temp_C;
@@ -140,14 +131,14 @@ void ISE_Probe::setTemp(float temp_C)
 
 /*!
    \code
-    ISE_Probe::calibrateSingle(100);
+    uFire_ISE::calibrateSingle(100);
    \endcode
    \brief Calibrates the probe using a single point.
    \param solutionmV          the mV of the calibration solution
    \post result will be saved in the device's EEPROM and used
    automatically thereafter
  */
-void ISE_Probe::calibrateSingle(float solutionmV)
+void uFire_ISE::calibrateSingle(float solutionmV)
 {
   _write_register(ISE_SOLUTION_REGISTER, solutionmV);
   _send_command(ISE_CALIBRATE_SINGLE);
@@ -156,13 +147,13 @@ void ISE_Probe::calibrateSingle(float solutionmV)
 
 /*!
    \code
-    ISE_Probe::calibrateProbeLow(50);
+    uFire_ISE::calibrateProbeLow(50);
    \endcode
    \brief Calibrates the dual-point values for the low reading and saves them
    in the devices's EEPROM.
    \param solutionmV          the mV of the calibration solution
  */
-void ISE_Probe::calibrateProbeLow(float solutionmV)
+void uFire_ISE::calibrateProbeLow(float solutionmV)
 {
   _write_register(ISE_SOLUTION_REGISTER, solutionmV);
   _send_command(ISE_CALIBRATE_LOW);
@@ -171,13 +162,13 @@ void ISE_Probe::calibrateProbeLow(float solutionmV)
 
 /*!
    \code
-   ISE_Probe::calibrateProbeHigh(400);
+   uFire_ISE::calibrateProbeHigh(400);
    \endcode
    \brief Calibrates the dual-point values for the high reading and saves them
    in the devices's EEPROM.
    \param solutionmV          the mV of the calibration solution
  */
-void ISE_Probe::calibrateProbeHigh(float solutionmV)
+void uFire_ISE::calibrateProbeHigh(float solutionmV)
 {
   _write_register(ISE_SOLUTION_REGISTER, solutionmV);
   _send_command(ISE_CALIBRATE_HIGH);
@@ -186,7 +177,7 @@ void ISE_Probe::calibrateProbeHigh(float solutionmV)
 
 /*!
    \code
-   ISE_Probe::setDualPointCalibration(50, 100, 48, 134);
+   uFire_ISE::setDualPointCalibration(50, 100, 48, 134);
    \endcode
    \brief Sets all the values for dual point calibration and saves them
    in the devices's EEPROM.
@@ -195,7 +186,7 @@ void ISE_Probe::calibrateProbeHigh(float solutionmV)
    \param readLow           the measured low point
    \param readHigh          the measured high point
  */
-void ISE_Probe::setDualPointCalibration(float refLow,
+void uFire_ISE::setDualPointCalibration(float refLow,
                                         float refHigh,
                                         float readLow,
                                         float readHigh)
@@ -208,72 +199,72 @@ void ISE_Probe::setDualPointCalibration(float refLow,
 
 /*!
    \code
-   float z = ISE_Probe::getCalibrateOffset();
+   float z = uFire_ISE::getCalibrateOffset();
    \endcode
    \brief Retrieves the single-point offset from the device.
    \return   the probe's offset
  */
-float ISE_Probe::getCalibrateOffset()
+float uFire_ISE::getCalibrateOffset()
 {
   return _read_register(ISE_CALIBRATE_SINGLE_REGISTER);
 }
 
 /*!
    \code
-   float calHigh = ISE_Probe::getCalibrateHigh();
+   float calHigh = uFire_ISE::getCalibrateHigh();
    \endcode
    \brief Retrieves the reference-high calibration data
    \return   the reference-high
  */
-float ISE_Probe::getCalibrateHighReference()
+float uFire_ISE::getCalibrateHighReference()
 {
   return _read_register(ISE_CALIBRATE_REFHIGH_REGISTER);
 }
 
 /*!
    \code
-   float calHigh = ISE_Probe::getCalibrateHighReading();
+   float calHigh = uFire_ISE::getCalibrateHighReading();
    \endcode
    \brief Retrieves the reading-high calibration data
    \return   the reading-high
  */
-float ISE_Probe::getCalibrateHighReading()
+float uFire_ISE::getCalibrateHighReading()
 {
   return _read_register(ISE_CALIBRATE_READHIGH_REGISTER);
 }
 
 /*!
    \code
-   float calLow = ISE_Probe::getCalibrateLow();
+   float calLow = uFire_ISE::getCalibrateLow();
    \endcode
    \brief Retrieves the reference-low calibration data
    \return   the reference-low
  */
-float ISE_Probe::getCalibrateLowReference()
+float uFire_ISE::getCalibrateLowReference()
 {
   return _read_register(ISE_CALIBRATE_REFLOW_REGISTER);
 }
 
 /*!
    \code
-   float calLow = ISE_Probe::getCalibrateLowReading();
+   float calLow = uFire_ISE::getCalibrateLowReading();
    \endcode
    \brief Retrieves the reference-low calibration data
    \return   the reading-low
  */
-float ISE_Probe::getCalibrateLowReading()
+float uFire_ISE::getCalibrateLowReading()
 {
   return _read_register(ISE_CALIBRATE_READLOW_REGISTER);
 }
 
 /*!
    \code
-   ISE_Probe::useTemperatureCompensation(true);
+   uFire_ISE::useTemperatureCompensation(true);
    \endcode
    \brief Configures device to use temperature compensation or not
    \param b   true for false
  */
-void ISE_Probe::useTemperatureCompensation(bool b)
+void uFire_ISE::useTemperatureCompensation(bool b)
 {
   uint8_t retval;
   uint8_t config = _read_byte(ISE_CONFIG_REGISTER);
@@ -291,12 +282,12 @@ void ISE_Probe::useTemperatureCompensation(bool b)
 
 /*!
    \code
-   uint8_t version = ISE_Probe::getVersion();
+   uint8_t version = uFire_ISE::getVersion();
    \endcode
    \brief Retrieves the firmware version of the device
    \return   version of firmware
  */
-uint8_t ISE_Probe::getVersion()
+uint8_t uFire_ISE::getVersion()
 {
   return _read_byte(ISE_VERSION_REGISTER);
 }
@@ -305,7 +296,7 @@ uint8_t ISE_Probe::getVersion()
    \brief Retrieves the firmware version of the device
    \return   version of firmware
  */
-uint8_t ISE_Probe::getFirmware()
+uint8_t uFire_ISE::getFirmware()
 {
   return _read_byte(ISE_FW_VERSION_REGISTER);
 }
@@ -313,7 +304,7 @@ uint8_t ISE_Probe::getFirmware()
 /*!
    \brief Resets all the stored calibration information.
  */
-void ISE_Probe::reset()
+void uFire_ISE::reset()
 {
   _write_register(ISE_CALIBRATE_SINGLE_REGISTER, NAN);
   delay(10);
@@ -330,7 +321,7 @@ void ISE_Probe::reset()
 
 /*!
    \code
-    ISE_Probe::setI2CAddress(0x3d);
+    uFire_ISE::setI2CAddress(0x3d);
    \endcode
 
    \brief Changes the i2c address of the device.
@@ -339,7 +330,7 @@ void ISE_Probe::reset()
    permanently change the address. If you forget the i2c address, you will need
    to use an i2c scanner to recover it.
  */
-void ISE_Probe::setI2CAddress(uint8_t i2cAddress)
+void uFire_ISE::setI2CAddress(uint8_t i2cAddress)
 {
   _write_register(ISE_SOLUTION_REGISTER, i2cAddress);
   _send_command(ISE_I2C);
@@ -348,13 +339,13 @@ void ISE_Probe::setI2CAddress(uint8_t i2cAddress)
 
 /*!
    \code
-    ISE_Probe::readEEPROM(300);
+    uFire_ISE::readEEPROM(300);
    \endcode
 
    \brief Utility function to read data from any location in EEPROM.
 
  */
-float ISE_Probe::readEEPROM(uint8_t address)
+float uFire_ISE::readEEPROM(uint8_t address)
 {
   _write_register(ISE_SOLUTION_REGISTER, address);
   _send_command(ISE_MEMORY_READ);
@@ -363,12 +354,12 @@ float ISE_Probe::readEEPROM(uint8_t address)
 
 /*!
    \code
-    ISE_Probe::writeEEPROM(300, 100);
+    uFire_ISE::writeEEPROM(300, 100);
    \endcode
 
    \brief Utility function to write any value into EEPROM.
  */
-void ISE_Probe::writeEEPROM(uint8_t address, float value)
+void uFire_ISE::writeEEPROM(uint8_t address, float value)
 {
   _write_register(ISE_SOLUTION_REGISTER, address);
   _write_register(ISE_BUFFER_REGISTER,   value);
@@ -377,13 +368,13 @@ void ISE_Probe::writeEEPROM(uint8_t address, float value)
 
 /*!
    \code
-    ISE_Probe::connected();
+    uFire_ISE::connected();
    \endcode
 
    \brief Returns true if connected, false is disconnected
 
  */
-bool ISE_Probe::connected()
+bool uFire_ISE::connected()
 {
   uint8_t retval = _read_byte(ISE_VERSION_REGISTER);
 
@@ -395,7 +386,7 @@ bool ISE_Probe::connected()
   }
 }
 
-void ISE_Probe::_change_register(uint8_t r)
+void uFire_ISE::_change_register(uint8_t r)
 {
   Wire.beginTransmission(_address);
   Wire.write(r);
@@ -403,7 +394,7 @@ void ISE_Probe::_change_register(uint8_t r)
   delay(10);
 }
 
-void ISE_Probe::_send_command(uint8_t command)
+void uFire_ISE::_send_command(uint8_t command)
 {
   Wire.beginTransmission(_address);
   Wire.write(ISE_TASK_REGISTER);
@@ -412,7 +403,7 @@ void ISE_Probe::_send_command(uint8_t command)
   delay(10);
 }
 
-void ISE_Probe::_write_register(uint8_t reg, float f)
+void uFire_ISE::_write_register(uint8_t reg, float f)
 {
   uint8_t b[5];
   float   f_val = f;
@@ -428,7 +419,7 @@ void ISE_Probe::_write_register(uint8_t reg, float f)
   delay(10);
 }
 
-float ISE_Probe::_read_register(uint8_t reg)
+float uFire_ISE::_read_register(uint8_t reg)
 {
   float retval;
 
@@ -446,7 +437,7 @@ float ISE_Probe::_read_register(uint8_t reg)
   return retval;
 }
 
-void ISE_Probe::_write_byte(uint8_t reg, uint8_t val)
+void uFire_ISE::_write_byte(uint8_t reg, uint8_t val)
 {
   uint8_t b[5];
 
@@ -458,7 +449,7 @@ void ISE_Probe::_write_byte(uint8_t reg, uint8_t val)
   delay(10);
 }
 
-uint8_t ISE_Probe::_read_byte(uint8_t reg)
+uint8_t uFire_ISE::_read_byte(uint8_t reg)
 {
   uint8_t retval;
 

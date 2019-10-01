@@ -8,9 +8,9 @@
    and simply adds it to the mV reading, known as Eh.
  */
 
- #include <ISE_ORP.h>
+ #include <uFire_ORP.h>
 
-ISE_ORP orp;
+uFire_ORP orp;
 long probePotential = 295;
 
 void setup() {

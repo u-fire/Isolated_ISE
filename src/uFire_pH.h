@@ -31,36 +31,64 @@
    questions@ufire.co to get in touch with someone
  */
 
-#ifndef ISE_ORP_H
-#define ISE_ORP_H
+#ifndef ISE_PH_H
+#define ISE_PH_H
 
 #include <math.h>
 #include "uFire_ISE.h"
 
-#define POTENTIAL_REGISTER_ADDRESS 100
+#define PROBE_MV_TO_PH 59.2
+#define TEMP_CORRECTION_FACTOR 0.03
 
-class ISE_ORP : public ISE_Probe {
+class uFire_pH : public uFire_ISE {
 public:
 
-  float ORP;
-  float Eh;
-  ISE_ORP() {}
+  float pH;
+  float pOH;
+  uFire_pH() {}
 
-  ISE_ORP(uint8_t i2c_address) : ISE_Probe(i2c_address) {}
+  uFire_pH(uint8_t i2c_address) : uFire_ISE(i2c_address) {}
 
   #ifdef ESP32
-  ISE_ORP(uint8_t sda,
-          uint8_t scl,
-          uint8_t i2c_address) : ISE_Probe(sda, scl, i2c_address) {}
+  uFire_pH(uint8_t sda,
+         uint8_t scl,
+         uint8_t i2c_address) : ISE_Probe(sda, scl, i2c_address) {}
 
-  ISE_ORP(uint8_t sda,
-          uint8_t scl) : ISE_Probe(sda, scl) {}
-
+  uFire_pH(uint8_t sda,
+         uint8_t scl) : ISE_Probe(sda, scl) {}
   #endif // ifndef ESP32
-  ~ISE_ORP();
-  float    measureORP();
-  void     setProbePotential(uint32_t potential);
-  uint32_t getProbePotential();
+  float measurepH();
+  float measurepH(float temp);
+  float pHtomV(float pH);
+  float mVtopH(float mV);
+  void  calibrateSingle(float solutionpH);
+  void  calibrateProbeLow(float solutionpH);
+  float getCalibrateLowReference();
+  float getCalibrateLowReading();
+  void  calibrateProbeHigh(float solutionpH);
+  float getCalibrateHighReference();
+  float getCalibrateHighReading();
+
+private:
+
+  float _measure(float temp);
 };
 
-#endif // ifndef ISE_ORP_H
+// for older code
+class ISE_pH: public uFire_pH{
+public:
+  ISE_pH() {}
+  ISE_pH(uint8_t i2c_address) : uFire_pH(i2c_address) {}
+
+  #ifdef ESP32
+  ISE_pH(uint8_t sda,
+         uint8_t scl,
+         uint8_t i2c_address) : uFire_pH(sda, scl, i2c_address) {}
+
+  ISE_pH(uint8_t sda,
+         uint8_t scl) : uFire_pH(sda, scl) {}
+  #endif // ifndef ESP32
+};
+
+
+  #endif // ifndef ISEPROBE_H

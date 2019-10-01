@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ISE_pH.h>
+#include <uFire_pH.h>
 
 class uFire_pH_MP
 {
@@ -8,7 +8,7 @@ public:
   float value;
   String emptyPlaceholder;
   uFire_pH_MP(){}
-  void begin(ISE_pH *ph);
+  void begin(uFire_pH *ph);
   String processMP(String json);
 private:
   ISE_pH *ph;

@@ -11,7 +11,7 @@
  */
  #include <uFire_ISE.h>
 
-ISE_Probe mv;
+uFire_ISE mv;
 
 void setup() {
   Serial.begin(9600);

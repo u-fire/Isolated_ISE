@@ -22,32 +22,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-/*!
-   \file ISE_Probe.cpp
-   \brief ISE Probe Class Implementation
+#include "uFire_ORP.h"
 
-   ufire.co for links to documentation, examples, and libraries
-   github.com/u-fire/ISE_Probe for feature requests, bug reports, and  questions
-   questions@ufire.co to get in touch with someone
- */
-
-#include "ISE_ORP.h"
-
-
-/*!
-   \brief Class destructor
- */
-ISE_ORP::~ISE_ORP()
+uFire_ORP::~uFire_ORP()
 {}
 
-/*!
-   \code
-    ISE_ORP::measureORP();
-   \endcode
-   \brief Starts an ORP measurement.
-   \return ORP
- */
-float ISE_ORP::measureORP()
+float uFire_ORP::measureORP()
 {
   measuremV();
   ORP = mV;
@@ -67,12 +47,12 @@ float ISE_ORP::measureORP()
   return mV;
 }
 
-void ISE_ORP::setProbePotential(uint32_t potential)
+void uFire_ORP::setProbePotential(uint32_t potential)
 {
   writeEEPROM(POTENTIAL_REGISTER_ADDRESS, potential);
 }
 
-uint32_t ISE_ORP::getProbePotential()
+uint32_t uFire_ORP::getProbePotential()
 {
   return readEEPROM(POTENTIAL_REGISTER_ADDRESS);
 }

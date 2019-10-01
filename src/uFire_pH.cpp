@@ -31,9 +31,9 @@
    questions@ufire.co to get in touch with someone
  */
 
-#include "ISE_pH.h"
+#include "uFire_pH.h"
 
-float ISE_pH::_measure(float temp)
+float uFire_pH::_measure(float temp)
 {
   // Turn mV into pH
   float mv = measuremV();
@@ -84,58 +84,58 @@ float ISE_pH::_measure(float temp)
   return pH;
 }
 
-float ISE_pH::measurepH(float temp)
+float uFire_pH::measurepH(float temp)
 {
   useTemperatureCompensation(true);
   return _measure(temp);
 }
 
-float ISE_pH::measurepH()
+float uFire_pH::measurepH()
 {
   return _measure(-127);
 }
 
-float ISE_pH::pHtomV(float pH)
+float uFire_pH::pHtomV(float pH)
 {
   return (7 - pH) * PROBE_MV_TO_PH;
 }
 
-float ISE_pH::mVtopH(float mV)
+float uFire_pH::mVtopH(float mV)
 {
   return fabs(7.0 - (mV / PROBE_MV_TO_PH));
 }
 
-void ISE_pH::calibrateSingle(float solutionpH)
+void uFire_pH::calibrateSingle(float solutionpH)
 {
-  ISE_Probe::calibrateSingle(pHtomV(solutionpH));
+  uFire_ISE::calibrateSingle(pHtomV(solutionpH));
 }
 
-void ISE_pH::calibrateProbeLow(float solutionpH)
+void uFire_pH::calibrateProbeLow(float solutionpH)
 {
-  ISE_Probe::calibrateProbeLow(pHtomV(solutionpH));
+  uFire_ISE::calibrateProbeLow(pHtomV(solutionpH));
 }
 
-float ISE_pH::getCalibrateLowReference()
+float uFire_pH::getCalibrateLowReference()
 {
-  return mVtopH(ISE_Probe::getCalibrateLowReference());
+  return mVtopH(uFire_ISE::getCalibrateLowReference());
 }
 
-float ISE_pH::getCalibrateLowReading()
+float uFire_pH::getCalibrateLowReading()
 {
-  return mVtopH(ISE_Probe::getCalibrateLowReading());
+  return mVtopH(uFire_ISE::getCalibrateLowReading());
 }
 
-void ISE_pH::calibrateProbeHigh(float solutionpH)
+void uFire_pH::calibrateProbeHigh(float solutionpH)
 {
-  ISE_Probe::calibrateProbeHigh(pHtomV(solutionpH));
+  uFire_ISE::calibrateProbeHigh(pHtomV(solutionpH));
 }
 
-float ISE_pH::getCalibrateHighReference()
+float uFire_pH::getCalibrateHighReference()
 {
-  return mVtopH(ISE_Probe::getCalibrateHighReference());
+  return mVtopH(uFire_ISE::getCalibrateHighReference());
 }
 
-float ISE_pH::getCalibrateHighReading()
+float uFire_pH::getCalibrateHighReading()
 {
-  return mVtopH(ISE_Probe::getCalibrateHighReading());
+  return mVtopH(uFire_ISE::getCalibrateHighReading());
 }

@@ -1,6 +1,6 @@
-from iseprobe import iseprobe
+from uFire_ISE import uFire_ISE
 
-mv = iseprobe()
+mv = uFire_ISE()
 
 mv.measuremV()
 print("mV: " + str(mv.mV))

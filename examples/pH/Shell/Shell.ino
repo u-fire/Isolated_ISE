@@ -27,12 +27,12 @@
     reset
  */
 
-#include <ISE_pH.h>
+#include <uFire_pH.h>
 
 #ifdef ESP32
-ISE_pH pH(19, 23); // sda, scl
+uFire_pH pH(19, 23); // sda, scl
 #else // ifdef ESP32
-ISE_pH pH;
+uFire_pH pH;
 #endif // ifdef ESP32
 
 String buffer, cmd, p1, p2;

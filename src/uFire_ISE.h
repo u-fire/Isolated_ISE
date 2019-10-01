@@ -22,16 +22,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-/*!
-   \file ISE_Probe.h
-   \brief ISE Probe Class Implementation
-
-   ufire.co for links to documentation, examples, and libraries
-   github.com/u-fire/ISE_Probe for feature requests, bug reports, and  questions
-   questions@ufire.co to get in touch with someone
-
- */
-
 #ifndef ISEPROBE_H
 #define ISEPROBE_H
 
@@ -78,7 +68,7 @@
 #define ISE_DUALPOINT_CONFIG_BIT 0         /*!< dual point config bit */
 #define ISE_TEMP_COMPENSATION_CONFIG_BIT 1 /*!< temperature compensation config bit */
 
-class ISE_Probe                            /*! ISE Class */
+class uFire_ISE                            /*! ISE Class */
 {
 public:
 
@@ -86,16 +76,16 @@ public:
   float tempC; /*!< Temperature in C */
   float tempF; /*!< Temperature in F */
   float mV;    /*!< mV of probe */
-  ISE_Probe(uint8_t i2c_address);
-  ISE_Probe();
+  uFire_ISE(uint8_t i2c_address);
+  uFire_ISE();
   #ifdef ESP32
-  ISE_Probe(uint8_t sda,
+  uFire_ISE(uint8_t sda,
             uint8_t scl,
             uint8_t i2c_address);
-  ISE_Probe(uint8_t sda,
+  uFire_ISE(uint8_t sda,
             uint8_t scl);
   #endif // ifndef ESP32
-  ~ISE_Probe();
+  ~uFire_ISE();
   float measuremV();
   float measureTemp();
   void  calibrateSingle(float solutionmV);
@@ -133,4 +123,5 @@ private:
   uint8_t _read_byte(uint8_t reg);
 };
 
+class ISE_Probe : public uFire_ISE {};
 #endif // ifndef ISEPROBE_H

@@ -1,11 +1,11 @@
-from iseprobe import iseprobe
+from uFire_ISE import uFire_ISE
 import math
 
 PROBE_MV_TO_PH = 59.2
 TEMP_CORRECTION_FACTOR = 0.03
 
 
-class ise_ph(iseprobe):
+class uFire_pH(uFire_ISE):
     pH = 0
     pOH = 0
 

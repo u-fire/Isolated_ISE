@@ -1,7 +1,7 @@
-from ise_ph import ise_ph
+from uFire_pH import uFire_pH
 
 # the passed parameter 3 indicates the third (/dev/i2c-3) I2C device
-ph = ise_ph()
+ph = uFire_pH()
 
 ph.measurepH()
 

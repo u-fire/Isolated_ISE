@@ -1,10 +1,9 @@
-from iseprobe import iseprobe
+from uFire_ISE import uFire_ISE
 import math
-
 POTENTIAL_REGISTER_ADDRESS = 100
 
 
-class ise_orp(iseprobe):
+class ufire_orp(uFire_ISE):
     ORP = 0
     Eh = 0
 
@@ -19,6 +18,7 @@ class ise_orp(iseprobe):
         if math.isinf(self.mV):
             self.ORP = -1
             self.Eh = -1
+
         return self.mV
 
     def setProbePotential(self, potential):
