@@ -8,10 +8,10 @@ public:
   float value;
   String emptyPlaceholder;
   uFire_pH_JSON(){}
-  void begin(ISE_pH *ph);
+  void begin(uFire_pH *ph);
   String processJSON(String json);
 private:
-  ISE_pH *ph;
+  uFire_pH *ph;
   String ph_reset();
   String ph_connected();
   String ph_single(String);

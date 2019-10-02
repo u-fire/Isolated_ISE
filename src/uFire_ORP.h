@@ -42,10 +42,10 @@ public:
   #ifdef ESP32
   uFire_ORP(uint8_t sda,
           uint8_t scl,
-          uint8_t i2c_address) : ISE_Probe(sda, scl, i2c_address) {}
+          uint8_t i2c_address) : uFire_ISE(sda, scl, i2c_address) {}
 
   uFire_ORP(uint8_t sda,
-          uint8_t scl) : ISE_Probe(sda, scl) {}
+          uint8_t scl) : uFire_ISE(sda, scl) {}
 
   #endif // ifndef ESP32
   ~uFire_ORP();

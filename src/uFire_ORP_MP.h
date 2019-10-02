@@ -8,10 +8,10 @@ public:
   float value;
   String emptyPlaceholder;
   uFire_ORP_MP(){}
-  void begin(ISE_ORP *orp);
+  void begin(uFire_ORP *orp);
   String processMP(String json);
 private:
-  ISE_ORP *orp;
+  uFire_ORP *orp;
   String orp_reset();
   String orp_connected();
   String orp_measure();

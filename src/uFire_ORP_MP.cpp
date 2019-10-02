@@ -2,7 +2,7 @@
 #include "uFire_ORP_MP.h"
 #include <ArduinoJson.h>
 
-void uFire_ORP_MP::begin(ISE_ORP *p_orp)
+void uFire_ORP_MP::begin(uFire_ORP *p_orp)
 {
   orp = p_orp;
   emptyPlaceholder = "-";

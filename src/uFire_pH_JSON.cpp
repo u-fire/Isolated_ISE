@@ -2,7 +2,7 @@
 #include "uFire_pH_JSON.h"
 #include <ArduinoJson.h>
 
-void uFire_pH_JSON::begin(ISE_pH *p_ph)
+void uFire_pH_JSON::begin(uFire_pH *p_ph)
 {
   ph = p_ph;
   emptyPlaceholder = "-";

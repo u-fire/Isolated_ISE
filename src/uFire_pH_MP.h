@@ -11,7 +11,7 @@ public:
   void begin(uFire_pH *ph);
   String processMP(String json);
 private:
-  ISE_pH *ph;
+  uFire_pH *ph;
   String ph_reset();
   String ph_connected();
   String ph_single(String);
