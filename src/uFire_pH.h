@@ -22,15 +22,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-/*!
-   \file ISE_Probe.cpp
-   \brief ISE Probe Class Implementation
-
-   ufire.co for links to documentation, examples, and libraries
-   github.com/u-fire/ISE_Probe for feature requests, bug reports, and  questions
-   questions@ufire.co to get in touch with someone
- */
-
 #ifndef ISE_PH_H
 #define ISE_PH_H
 
@@ -50,13 +41,10 @@ public:
   uFire_pH(uint8_t i2c_address) : uFire_ISE(i2c_address) {}
 
   #ifdef ESP32
-  uFire_pH(uint8_t sda,
-         uint8_t scl,
-         uint8_t i2c_address) : uFire_ISE(sda, scl, i2c_address) {}
-
-  uFire_pH(uint8_t sda,
-         uint8_t scl) : uFire_ISE(sda, scl) {}
+  uFire_pH(uint8_t sda, uint8_t scl, uint8_t i2c_address) : uFire_ISE(sda, scl, i2c_address) {}
+  uFire_pH(uint8_t sda, uint8_t scl) : uFire_ISE(sda, scl) {}
   #endif // ifndef ESP32
+  
   float measurepH();
   float measurepH(float temp);
   float pHtomV(float pH);
