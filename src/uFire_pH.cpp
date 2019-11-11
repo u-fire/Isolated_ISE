@@ -22,15 +22,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-/*!
-   \file ISE_Probe.cpp
-   \brief ISE Probe Class Implementation
-
-   ufire.co for links to documentation, examples, and libraries
-   github.com/u-fire/ISE_Probe for feature requests, bug reports, and  questions
-   questions@ufire.co to get in touch with someone
- */
-
 #include "uFire_pH.h"
 
 float uFire_pH::_measure(float temp)
@@ -105,14 +96,18 @@ float uFire_pH::mVtopH(float mV)
   return fabs(7.0 - (mV / PROBE_MV_TO_PH));
 }
 
-void uFire_pH::calibrateSingle(float solutionpH)
+float uFire_pH::calibrateSingle(float solutionpH)
 {
   uFire_ISE::calibrateSingle(pHtomV(solutionpH));
+
+  return uFire_ISE::getCalibrateOffset();
 }
 
-void uFire_pH::calibrateProbeLow(float solutionpH)
+float uFire_pH::calibrateProbeLow(float solutionpH)
 {
   uFire_ISE::calibrateProbeLow(pHtomV(solutionpH));
+
+  return mVtopH(uFire_ISE::getCalibrateLowReading());
 }
 
 float uFire_pH::getCalibrateLowReference()
@@ -125,9 +120,11 @@ float uFire_pH::getCalibrateLowReading()
   return mVtopH(uFire_ISE::getCalibrateLowReading());
 }
 
-void uFire_pH::calibrateProbeHigh(float solutionpH)
+float uFire_pH::calibrateProbeHigh(float solutionpH)
 {
   uFire_ISE::calibrateProbeHigh(pHtomV(solutionpH));
+
+  return mVtopH(uFire_ISE::getCalibrateHighReading());
 }
 
 float uFire_pH::getCalibrateHighReference()

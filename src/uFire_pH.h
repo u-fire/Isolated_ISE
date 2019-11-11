@@ -49,11 +49,11 @@ public:
   float measurepH(float temp);
   float pHtomV(float pH);
   float mVtopH(float mV);
-  void  calibrateSingle(float solutionpH);
-  void  calibrateProbeLow(float solutionpH);
+  float  calibrateSingle(float solutionpH);
+  float  calibrateProbeLow(float solutionpH);
   float getCalibrateLowReference();
   float getCalibrateLowReading();
-  void  calibrateProbeHigh(float solutionpH);
+  float  calibrateProbeHigh(float solutionpH);
   float getCalibrateHighReference();
   float getCalibrateHighReading();
 

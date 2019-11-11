@@ -1,3 +1,4 @@
+#if !defined (ESP8266)
 #if __has_include("ArduinoJson.h")
 #include "uFire_pH_MP.h"
 #include <ArduinoJson.h>
@@ -188,4 +189,4 @@ String uFire_pH_MP::ph_temp()
   return output;
 }
 #endif
-
+#endif

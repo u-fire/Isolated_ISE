@@ -4,10 +4,9 @@
    questions@ufire.co to get in touch with someone
 
 
-   This show show to use temperature compensation while taking a pH reading.
-   If useTemperatureCompensation is true, a temperature reading is also taken, and an
-   adjustment formula is applied. The adjustment is typically slight and not applied within
-   certain temperature ranges and pH ranges.
+   This shows how to use temperature compensation while taking a pH reading.
+   The adjustment is typically slight and not applied within
+   certain temperature and pH ranges.
 
    Keep in mind that temperature compensation in regards to pH adjusts for the probe's 
    resistance change, not the changes that take place in the solution.

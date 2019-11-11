@@ -1,3 +1,4 @@
+#if !defined (ESP8266)
 #if __has_include("ArduinoJson.h")
 #include "uFire_ORP_MP.h"
 #include <ArduinoJson.h>
@@ -120,4 +121,5 @@ String uFire_ORP_MP::orp_temp()
   serializeMsgPack(doc, output);
   return output;
 }
+#endif
 #endif

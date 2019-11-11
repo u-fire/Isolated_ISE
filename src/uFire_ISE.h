@@ -88,9 +88,9 @@ public:
   ~uFire_ISE();
   float measuremV();
   float measureTemp();
-  void  calibrateSingle(float solutionmV);
-  void  calibrateProbeLow(float solutionmV);
-  void  calibrateProbeHigh(float solutionmV);
+  float  calibrateSingle(float solutionmV);
+  float  calibrateProbeLow(float solutionmV);
+  float  calibrateProbeHigh(float solutionmV);
   void  setDualPointCalibration(float refLow,
                                 float refHigh,
                                 float readLow,
