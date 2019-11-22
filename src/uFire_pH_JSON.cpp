@@ -1,4 +1,4 @@
-#if !defined (ESP8266)
+#ifdef __has_include
 #if __has_include("ArduinoJson.h")
 #include "uFire_pH_JSON.h"
 #include <ArduinoJson.h>

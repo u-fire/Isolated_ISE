@@ -28,7 +28,7 @@
 uFire_ISE::uFire_ISE(uint8_t i2c_address)
 {
   _address = i2c_address;
-  #ifndef ARDUINO_SAMD_VARIANT_COMPLIANCE
+  #if !defined (ARDUINO_SAMD_VARIANT_COMPLIANCE) || !defined (_VARIANT_ARDUINO_STM32_)
   Wire.begin();
   #endif // ifndef ARDUINO_SAMD_VARIANT_COMPLIANCE
 }
@@ -36,7 +36,7 @@ uFire_ISE::uFire_ISE(uint8_t i2c_address)
 uFire_ISE::uFire_ISE()
 {
   _address = ISE_PROBE_I2C;
-  #ifndef ARDUINO_SAMD_VARIANT_COMPLIANCE
+  #if !defined (ARDUINO_SAMD_VARIANT_COMPLIANCE) || !defined (_VARIANT_ARDUINO_STM32_)
   Wire.begin();
   #endif // ifndef ARDUINO_SAMD_VARIANT_COMPLIANCE
 }
