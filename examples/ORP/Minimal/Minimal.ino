@@ -15,6 +15,9 @@ long probePotential = 295;
 
 void setup() {
   Serial.begin(9600);
+  Wire.begin();
+  
+  orp.begin();
   orp.setProbePotential(probePotential);
 }
 
@@ -23,4 +26,5 @@ void loop() {
   Serial.print("mV: "); Serial.println(orp.ORP);
   Serial.print("Eh: "); Serial.println(orp.Eh);
   Serial.println("---");
+  delay(1000);
 }

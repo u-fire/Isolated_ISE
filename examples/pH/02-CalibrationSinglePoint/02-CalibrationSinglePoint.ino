@@ -6,30 +6,30 @@
    For hardware version 2, firmware 2
  */
 
- #include <uFire_ISE.h>
+ #include <uFire_pH.h>
 
-uFire_ISE mv;
+uFire_pH ph;
 
 void setup() {
   Serial.begin(9600);
   Wire.begin();
 
   // https://ufire.co/docs/uFire_ISE/api.html#begin
-  mv.begin();
+  ph.begin();
 
   // reset the calibration data
   //https://ufire.co/docs/uFire_ISE/api.html#reset
-  mv.reset();
+  ph.reset();
   
-  // mV value of the calibration solution.
-  // https://ufire.co/docs/uFire_ISE/api.html#calibratesingle
-  mv.calibrateSingle(200.0);
+  // pH value of the calibration solution.
+  // https://ufire.co/docs/uFire_ISE/ph.html#calibratesingle
+  ph.calibrateSingle(7.0);
 }
 
 void loop() {
-  // https://ufire.co/docs/uFire_ISE/api.html#measuremv
-  mv.measuremV();
+  // https://ufire.co/docs/uFire_ISE/ph.html#measureph
+  ph.measurepH();
   
-  Serial.println((String) "mV: " + mv.mV);
+  Serial.println((String) "pH: " + ph.pH);
   delay(1000);
 }

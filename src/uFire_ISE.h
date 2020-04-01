@@ -76,16 +76,7 @@ public:
   float tempC; /*!< Temperature in C */
   float tempF; /*!< Temperature in F */
   float mV;    /*!< mV of probe */
-  uFire_ISE(uint8_t i2c_address);
-  uFire_ISE();
-  #ifdef ESP32
-  uFire_ISE(uint8_t sda,
-            uint8_t scl,
-            uint8_t i2c_address);
-  uFire_ISE(uint8_t sda,
-            uint8_t scl);
-  #endif // ifndef ESP32
-  ~uFire_ISE();
+  bool  begin(uint8_t address=ISE_PROBE_I2C, TwoWire &wirePort=Wire);
   float measuremV();
   float measureTemp();
   float  calibrateSingle(float solutionmV);
@@ -110,9 +101,15 @@ public:
                       float   value);
   float   readEEPROM(uint8_t address);
   bool    connected();
+  void    setBlocking(bool);
+  bool    getBlocking();
+  void    readData();
 
 private:
 
+  TwoWire *_i2cPort;
+  bool    _blocking = true;
+  void    _updateRegisters();
   void    _change_register(uint8_t register);
   void    _send_command(uint8_t command);
   void    _write_register(uint8_t reg,

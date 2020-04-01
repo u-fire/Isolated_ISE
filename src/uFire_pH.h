@@ -35,47 +35,29 @@ class uFire_pH : public uFire_ISE {
 public:
 
   float pH;
-  float pOH;
-  uFire_pH() {}
-
-  uFire_pH(uint8_t i2c_address) : uFire_ISE(i2c_address) {}
-
-  #ifdef ESP32
-  uFire_pH(uint8_t sda, uint8_t scl, uint8_t i2c_address) : uFire_ISE(sda, scl, i2c_address) {}
-  uFire_pH(uint8_t sda, uint8_t scl) : uFire_ISE(sda, scl) {}
-  #endif // ifndef ESP32
-  
-  float measurepH();
-  float measurepH(float temp);
+  float pOH;  
+  float measurepH(float temp=25);
   float pHtomV(float pH);
   float mVtopH(float mV);
-  float  calibrateSingle(float solutionpH);
-  float  calibrateProbeLow(float solutionpH);
+  float calibrateSingle(float solutionpH);
+  float calibrateProbeLow(float solutionpH);
   float getCalibrateLowReference();
   float getCalibrateLowReading();
-  float  calibrateProbeHigh(float solutionpH);
+  float calibrateProbeHigh(float solutionpH);
   float getCalibrateHighReference();
   float getCalibrateHighReading();
+  void  readData();
 
 private:
 
-  float _measure(float temp);
+  float _measure(float temp=25);
+  void  _updateRegisters();
 };
 
 // for older code
 class ISE_pH: public uFire_pH{
 public:
-  ISE_pH() {}
-  ISE_pH(uint8_t i2c_address) : uFire_pH(i2c_address) {}
 
-  #ifdef ESP32
-  ISE_pH(uint8_t sda,
-         uint8_t scl,
-         uint8_t i2c_address) : uFire_pH(sda, scl, i2c_address) {}
-
-  ISE_pH(uint8_t sda,
-         uint8_t scl) : uFire_pH(sda, scl) {}
-  #endif // ifndef ESP32
 };
 
 

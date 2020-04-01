@@ -1,4 +1,4 @@
-// Copyright (c) 2018 Justin Decker
+// Copyright (c) 2018-2020 Justin Decker
 
 //
 // MIT License
@@ -25,52 +25,19 @@
 #include <math.h>
 #include "uFire_ISE.h"
 
-uFire_ISE::uFire_ISE(uint8_t i2c_address)
+bool uFire_ISE::begin(uint8_t address, TwoWire &wirePort)
 {
-  _address = i2c_address;
-  #if !defined (ARDUINO_SAMD_VARIANT_COMPLIANCE) || !defined (_VARIANT_ARDUINO_STM32_)
-  Wire.begin();
-  #endif // ifndef ARDUINO_SAMD_VARIANT_COMPLIANCE
+  _address = address;
+  _i2cPort = &wirePort;
+
+  return connected();
 }
-
-uFire_ISE::uFire_ISE()
-{
-  _address = ISE_PROBE_I2C;
-  #if !defined (ARDUINO_SAMD_VARIANT_COMPLIANCE) || !defined (_VARIANT_ARDUINO_STM32_)
-  Wire.begin();
-  #endif // ifndef ARDUINO_SAMD_VARIANT_COMPLIANCE
-}
-
-#ifdef ESP32
-uFire_ISE::uFire_ISE(uint8_t sda, uint8_t scl, uint8_t i2c_address)
-{
-  _address = i2c_address;
-  Wire.begin(sda, scl, 100000);
-}
-
-uFire_ISE::uFire_ISE(uint8_t sda, uint8_t scl)
-{
-  _address = ISE_PROBE_I2C;
-  Wire.begin(sda, scl, 100000);
-}
-
-#endif // ifndef ESP32
-
-uFire_ISE::~uFire_ISE()
-{}
 
 float uFire_ISE::measuremV()
 {
   _send_command(ISE_MEASURE_MV);
-  delay(ISE_MV_MEASURE_TIME);
-  mV = _read_register(ISE_MV_REGISTER);
-
-  if (isinf(mV)) {
-    mV = -1;
-  }
-  if (isnan(mV)) {
-    mV = -1;
-  }
+  if(_blocking) delay(ISE_MV_MEASURE_TIME);
+  _updateRegisters();
 
   return mV;
 }
@@ -78,17 +45,11 @@ float uFire_ISE::measuremV()
 float uFire_ISE::measureTemp()
 {
   _send_command(ISE_MEASURE_TEMP);
-  delay(ISE_TEMP_MEASURE_TIME);
-  tempC = _read_register(ISE_TEMP_REGISTER);
-  if (tempC == -127.0)
-  {
-    tempF = -127;
-  }
-  else
-  {
-    tempF = ((tempC * 9) / 5) + 32;
-  }
+  if(_blocking) delay(ISE_TEMP_MEASURE_TIME);
+  _updateRegisters();
+
   return tempC;
+
 }
 
 void uFire_ISE::setTemp(float temp_C)
@@ -102,7 +63,7 @@ float uFire_ISE::calibrateSingle(float solutionmV)
 {
   _write_register(ISE_SOLUTION_REGISTER, solutionmV);
   _send_command(ISE_CALIBRATE_SINGLE);
-  delay(ISE_MV_MEASURE_TIME);
+  if(_blocking) delay(ISE_MV_MEASURE_TIME);
 
   return getCalibrateOffset();
 }
@@ -111,7 +72,7 @@ float uFire_ISE::calibrateProbeLow(float solutionmV)
 {
   _write_register(ISE_SOLUTION_REGISTER, solutionmV);
   _send_command(ISE_CALIBRATE_LOW);
-  delay(ISE_MV_MEASURE_TIME);
+  if(_blocking) delay(ISE_MV_MEASURE_TIME);
 
   return getCalibrateLowReading();
 }
@@ -120,7 +81,7 @@ float uFire_ISE::calibrateProbeHigh(float solutionmV)
 {
   _write_register(ISE_SOLUTION_REGISTER, solutionmV);
   _send_command(ISE_CALIBRATE_HIGH);
-  delay(ISE_MV_MEASURE_TIME);
+  if(_blocking) delay(ISE_MV_MEASURE_TIME);
 
   return getCalibrateHighReading();
 }
@@ -233,6 +194,48 @@ bool uFire_ISE::connected()
   else {
     return false;
   }
+}
+
+void uFire_ISE::setBlocking(bool b)
+{
+   _blocking = b;
+}
+
+bool uFire_ISE::getBlocking()
+{
+    return _blocking;
+}
+
+void uFire_ISE::readData()
+{
+  _updateRegisters();
+  getCalibrateHighReading();
+  getCalibrateHighReference();
+  getCalibrateLowReading();
+  getCalibrateLowReference();
+  getCalibrateOffset();
+}
+
+void uFire_ISE::_updateRegisters()
+{
+  mV = _read_register(ISE_MV_REGISTER);
+  if (isinf(mV)) {
+    mV = -1;
+  }
+  if (isnan(mV)) {
+    mV = -1;
+  }
+
+  tempC = _read_register(ISE_TEMP_REGISTER);
+  if (tempC == -127.0)
+  {
+    tempF = -127;
+  }
+  else
+  {
+    tempF = ((tempC * 9) / 5) + 32;
+  }
+
 }
 
 void uFire_ISE::_change_register(uint8_t r)

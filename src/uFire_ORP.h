@@ -35,33 +35,14 @@ public:
 
   float ORP;
   float Eh;
-  uFire_ORP() {}
 
-  uFire_ORP(uint8_t i2c_address) : uFire_ISE(i2c_address) {}
-
-  #ifdef ESP32
-  uFire_ORP(uint8_t sda, uint8_t scl, uint8_t i2c_address) : uFire_ISE(sda, scl, i2c_address) {}
-  uFire_ORP(uint8_t sda, uint8_t scl) : uFire_ISE(sda, scl) {}
-  #endif // ifndef ESP32
-  
-  ~uFire_ORP();
   float    measureORP();
   void     setProbePotential(uint32_t potential);
   uint32_t getProbePotential();
+  void     readData();
 };
 
 class ISE_ORP : public uFire_ORP{
-public:
-        ISE_ORP() {}
-        ISE_ORP(uint8_t i2c_address) : uFire_ORP(i2c_address) {}
-        #ifdef ESP32
-        ISE_ORP(uint8_t sda,
-                uint8_t scl,
-                uint8_t i2c_address) : uFire_ORP(sda, scl, i2c_address) {}
 
-        ISE_ORP(uint8_t sda,
-                uint8_t scl) : uFire_ORP(sda, scl) {}
-
-        #endif // ifndef ESP32
 };
 #endif // ifndef ISE_ORP_H

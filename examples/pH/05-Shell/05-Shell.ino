@@ -29,12 +29,7 @@
 
 #include <uFire_pH.h>
 
-#ifdef ESP32
-uFire_pH pH(19, 23); // sda, scl
-#else // ifdef ESP32
 uFire_pH pH;
-#endif // ifdef ESP32
-
 String buffer, cmd, p1, p2;
 
 void config()
@@ -43,7 +38,7 @@ void config()
   Serial.println(pH.connected() ? "connected" : "*disconnected*");
   Serial.print("  offset: ");
   Serial.println(pH.getCalibrateOffset(), 4);
-  Serial.print("  dual point: ");
+  Serial.println("  dual point: ");
   Serial.print("    low reference | read: ");
   Serial.print(pH.getCalibrateLowReference(), 4);
   Serial.print(" | ");
@@ -52,10 +47,9 @@ void config()
   Serial.print(pH.getCalibrateHighReference(), 4);
   Serial.print(" | ");
   Serial.println(pH.getCalibrateHighReading(), 4);
-  Serial.print("  temp. compensation: ");
-  Serial.print("  version: ");
+  Serial.print("hardware:firmware version: ");
   Serial.print(pH.getVersion(), HEX);
-  Serial.print(".");
+  Serial.print(":");
   Serial.println(pH.getFirmware(), HEX);
 }
 
@@ -100,15 +94,26 @@ void ph()
 {
   while (Serial.available() == 0)
   {
+    if (p1.length())
+    {
+      pH.measurepH(p1.toFloat());
+    }
+    else
+    {
       pH.measurepH();
-      Serial.print("pH: ");
-      Serial.println(pH.pH, 4);
-      delay(1000);
+    }
+    
+    Serial.print("pH: ");
+    Serial.println(pH.pH, 4);
+    delay(1000);
   }
 }
 
 void data()
 {
+  pH.readData();
+  Serial.print("pH: ");
+  Serial.println(pH.pH);
   Serial.print("mV: ");
   Serial.println(pH.mV);
   Serial.print("C|F: ");
@@ -134,7 +139,7 @@ void high()
 {
   if (p1.length())
   {
-    pH.calibrateProbeHigh(p1.toFloat());
+    Serial.println(pH.calibrateProbeHigh(p1.toFloat()));
   }
 
   Serial.print("high reference | read: ");
@@ -169,30 +174,18 @@ void write()
 
 void cmd_run()
 {
-  if ((cmd == "conf") || (cmd == "config") || (cmd == "c"))
-    config();
-  if ((cmd == "reset") || (cmd == "r"))
-    reset_config();
-  if ((cmd == "temp") || (cmd == "t"))
-    temperature();
-  if ((cmd == "calibrate") || (cmd == "cal"))
-    calibrate();
-  if (cmd == "mv")
-    mv();
-  if (cmd == "ph")
-    ph();
-  if ((cmd == "data") || (cmd == "d"))
-    data();
-  if (cmd == "low")
-    low();
-  if (cmd == "high")
-    high();
-  if (cmd == "i2c")
-    i2c();
-  if (cmd == "read")
-    read();
-  if (cmd == "write")
-    write();
+  if ((cmd == "conf") || (cmd == "config") || (cmd == "c")) config();
+  if ((cmd == "reset") || (cmd == "r")) reset_config();
+  if ((cmd == "temp") || (cmd == "t")) temperature();
+  if ((cmd == "calibrate") || (cmd == "cal")) calibrate();
+  if (cmd == "mv") mv();
+  if (cmd == "ph") ph();
+  if ((cmd == "data") || (cmd == "d")) data();
+  if (cmd == "low") low();
+  if (cmd == "high") high();
+  if (cmd == "i2c") i2c();
+  if (cmd == "read") read();
+  if (cmd == "write") write();
 }
 
 void cli_process()
@@ -239,6 +232,7 @@ void setup()
 {
   Wire.begin();
   Serial.begin(9600);
+  pH.begin();
   config();
   Serial.print("> ");
 }

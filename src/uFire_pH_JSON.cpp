@@ -6,6 +6,7 @@
 void uFire_pH_JSON::begin(uFire_pH *p_ph)
 {
   ph = p_ph;
+  ph->begin();
   emptyPlaceholder = "-";
 }
 

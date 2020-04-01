@@ -6,6 +6,7 @@
 void uFire_ORP_JSON::begin(ISE_ORP *p_orp)
 {
   orp = p_orp;
+  orp->begin();
   emptyPlaceholder = "-";
 }
 

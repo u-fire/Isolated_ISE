@@ -1,4 +1,4 @@
-// Copyright (c) 2018 Justin Decker
+// Copyright (c) 2018-2020 Justin Decker
 
 //
 // MIT License
@@ -24,9 +24,6 @@
 
 #include "uFire_ORP.h"
 
-uFire_ORP::~uFire_ORP()
-{}
-
 float uFire_ORP::measureORP()
 {
   measuremV();
@@ -45,6 +42,23 @@ float uFire_ORP::measureORP()
   }
 
   return mV;
+}
+
+void uFire_ORP::readData()
+{
+  ORP = mV;
+  Eh  = mV + getProbePotential();
+
+  if (isinf(ORP)) {
+    mV  = -1;
+    ORP = -1;
+    Eh  = -1;
+  }
+  if (isnan(ORP)) {
+    mV  = -1;
+    ORP = -1;
+    Eh  = -1;
+  }
 }
 
 void uFire_ORP::setProbePotential(uint32_t potential)

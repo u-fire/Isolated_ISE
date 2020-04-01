@@ -6,6 +6,7 @@
 void uFire_pH_MP::begin(uFire_pH *p_ph)
 {
   ph = p_ph;
+  ph->begin();
   emptyPlaceholder = "-";
 }
 

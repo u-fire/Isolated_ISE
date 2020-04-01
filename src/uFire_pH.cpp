@@ -1,4 +1,4 @@
-// Copyright (c) 2018 Justin Decker
+// Copyright (c) 2018-2020 Justin Decker
 
 //
 // MIT License
@@ -27,7 +27,7 @@
 float uFire_pH::_measure(float temp)
 {
   // Turn mV into pH
-  float mv = measuremV();
+  float mv = mV;
 
   if (mv == -1)
   {
@@ -39,23 +39,20 @@ float uFire_pH::_measure(float temp)
   pH = fabs(7.0 - (mv / PROBE_MV_TO_PH));
 
   // Determine the temperature correction
-  if (temp != -127)
+  uint8_t distance_from_7  = abs(7 - round(pH));
+  uint8_t distance_from_25 = floor(abs(25 - round(temp)) / 10);
+  float   temp_multiplier  = (distance_from_25 * distance_from_7) * TEMP_CORRECTION_FACTOR;
+  if ((pH >= 8.0) && (temp >= 35))
   {
-    uint8_t distance_from_7  = abs(7 - round(pH));
-    uint8_t distance_from_25 = floor(abs(25 - round(temp)) / 10);
-    float   temp_multiplier  = (distance_from_25 * distance_from_7) * TEMP_CORRECTION_FACTOR;
-    if ((pH >= 8.0) && (temp >= 35))
-    {
-      // negative
-      temp_multiplier *= -1;
-    }
-    if ((pH <= 6.0) && (temp <= 15))
-    {
-      // negative
-      temp_multiplier *= -1;
-    }
-    pH += temp_multiplier;
+    // negative
+    temp_multiplier *= -1;
   }
+  if ((pH <= 6.0) && (temp <= 15))
+  {
+    // negative
+    temp_multiplier *= -1;
+  }
+  pH += temp_multiplier;
 
   pOH = fabs(pH - 14);
 
@@ -77,13 +74,17 @@ float uFire_pH::_measure(float temp)
 
 float uFire_pH::measurepH(float temp)
 {
-  useTemperatureCompensation(true);
+  useTemperatureCompensation(true);  
+  // Turn mV into pH
+  measuremV();
+  _measure();
   return _measure(temp);
 }
 
-float uFire_pH::measurepH()
+
+void uFire_pH::readData()
 {
-  return _measure(-127);
+  _measure();
 }
 
 float uFire_pH::pHtomV(float pH)
@@ -135,4 +136,9 @@ float uFire_pH::getCalibrateHighReference()
 float uFire_pH::getCalibrateHighReading()
 {
   return mVtopH(uFire_ISE::getCalibrateHighReading());
+}
+
+void uFire_pH::_updateRegisters()
+{
+
 }
